@@ -57,12 +57,22 @@ char *_getenv(const char *name);
 void _env(char **arv);
 void _setenv(char **arv);
 void _unsetenv(char **arv);
-void _exit(char **arv);
-
+void _exitt(char **arv);
 
 /* Terminal Checkers */
 void sig_handler(int sig_num);
 void _EOF(int len, char *buff);
 void _isatty(void);
+
+
+list_path *add_node_end(list_path **head, char *str);
+list_path *linkpath(char *path);
+char *_which(char *filename, list_path *head);
+
+void(*checkbuild(char **arv))(char **arv);
+
+void execute(char **argv);
+void freearv(char **arv);
+void free_list(list_path *head);
 
 #endif
