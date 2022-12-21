@@ -1,13 +1,13 @@
 #include "main.h"
 
 /**
- * _exit - exits the shell with or without a return of status n
+ * _exitt - exits the shell with or without a return of status n
  * @arv: array of words of the entered line
  *
  * Return: void
  */
 
-void _exit(char **arv)
+void _exitt(char **arv)
 {
 	int i, n;
 
@@ -40,7 +40,7 @@ void _env(char **arv __attribute__ ((unused)))
 	for (i = 0; environ[i]; i++)
 	{
 		_puts(environ[i]);
-		_puts("\n");
+		_puts(" ");
 	}
 
 }
