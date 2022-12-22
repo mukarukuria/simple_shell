@@ -1,12 +1,11 @@
-#include "main.h"
+#include "shell.h"
+
 
 /**
  * _getenv - gets the value of the global variable
  * @name: name of the global variable
- *
  * Return: string of value
  */
-
 char *_getenv(const char *name)
 {
 	int i, j;
@@ -36,11 +35,11 @@ char *_getenv(const char *name)
 	return (0);
 }
 
+
 /**
  * add_node_end - adds a new node at the end of a list_t list
  * @head: pointer to pointer to our linked list
  * @str: pointer to string in previous first node
- *
  * Return: address of the new element/node
  */
 
@@ -84,10 +83,8 @@ list_path *add_node_end(list_path **head, char *str)
 /**
  * linkpath - creates a linked list for path directories
  * @path: string of path value
- *
  * Return: pointer to the created linked list
  */
-
 list_path *linkpath(char *path)
 {
 	list_path *head = '\0';
@@ -108,10 +105,8 @@ list_path *linkpath(char *path)
  * _which - finds the pathname of a filename
  * @filename: name of file or command
  * @head: head of linked list of path directories
- *
  * Return: pathname of filename or NULL if no match
  */
-
 char *_which(char *filename, list_path *head)
 {
 	struct stat st;
@@ -132,4 +127,22 @@ char *_which(char *filename, list_path *head)
 	}
 
 	return (NULL);
+}
+
+/**
+ * free_list - frees a list_t
+ *@head: pointer to our linked list
+ */
+void free_list(list_path *head)
+{
+	list_path *storage;
+
+	while (head)
+	{
+		storage = head->p;
+		free(head->dir);
+		free(head);
+		head = storage;
+	}
+
 }

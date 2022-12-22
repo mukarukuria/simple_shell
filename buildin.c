@@ -1,13 +1,10 @@
-#include "main.h"
+#include "shell.h"
 
 /**
- * _exitt - exits the shell with or without a return of status n
+ * exitt - exits the shell with or without a return of status n
  * @arv: array of words of the entered line
- *
- * Return: void
  */
-
-void _exitt(char **arv)
+void exitt(char **arv)
 {
 	int i, n;
 
@@ -26,13 +23,37 @@ void _exitt(char **arv)
 }
 
 /**
- * _env - prints the current environment
- * @arv: array of arguments
- *
- * Return: void
+ * _atoi - converts a string into an integer
+ *@s: pointer to a string
+ *Return: the integer
  */
+int _atoi(char *s)
+{
+	int i, integer, sign = 1;
 
-void _env(char **arv __attribute__ ((unused)))
+	i = 0;
+	integer = 0;
+	while (!((s[i] >= '0') && (s[i] <= '9')) && (s[i] != '\0'))
+	{
+		if (s[i] == '-')
+		{
+			sign = sign * (-1);
+		}
+		i++;
+	}
+	while ((s[i] >= '0') && (s[i] <= '9'))
+	{
+		integer = (integer * 10) + (sign * (s[i] - '0'));
+		i++;
+	}
+	return (integer);
+}
+
+/**
+ * env - prints the current environment
+ * @arv: array of arguments
+ */
+void env(char **arv __attribute__ ((unused)))
 {
 
 	int i;
@@ -40,7 +61,7 @@ void _env(char **arv __attribute__ ((unused)))
 	for (i = 0; environ[i]; i++)
 	{
 		_puts(environ[i]);
-		_puts(" ");
+		_puts("\n");
 	}
 
 }
@@ -48,10 +69,7 @@ void _env(char **arv __attribute__ ((unused)))
 /**
  * _setenv - Initialize a new environment variable, or modify an existing one
  * @arv: array of entered words
- *
- * Return: void
  */
-
 void _setenv(char **arv)
 {
 	int i, j, k;
@@ -99,8 +117,6 @@ void _setenv(char **arv)
 /**
  * _unsetenv - Remove an environment variable
  * @arv: array of entered words
- *
- * Return: void
  */
 void _unsetenv(char **arv)
 {

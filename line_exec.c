@@ -1,10 +1,55 @@
-#include "main.h"
+#include "shell.h"
+
+
+/**
+ * splitstring - splits a string and makes it an array of pointers to words
+ * @str: the string to be split
+ * @delim: the delimiter
+ * Return: array of pointers to words
+ */
+
+char **splitstring(char *str, const char *delim)
+{
+	int i, wn;
+	char **array;
+	char *token;
+	char *copy;
+
+	copy = malloc(_strlen(str) + 1);
+	if (copy == NULL)
+	{
+		perror(_getenv("_"));
+		return (NULL);
+	}
+	i = 0;
+	while (str[i])
+	{
+		copy[i] = str[i];
+		i++;
+	}
+	copy[i] = '\0';
+
+	token = strtok(copy, delim);
+	array = malloc((sizeof(char *) * 2));
+	array[0] = _strdup(token);
+
+	i = 1;
+	wn = 3;
+	while (token)
+	{
+		token = strtok(NULL, delim);
+		array = _realloc(array, (sizeof(char *) * (wn - 1)), (sizeof(char *) * wn));
+		array[i] = _strdup(token);
+		i++;
+		wn++;
+	}
+	free(copy);
+	return (array);
+}
 
 /**
  * execute - executes a command
  * @argv: array of arguments
- *
- * Return: void
  */
 
 void execute(char **argv)
@@ -33,7 +78,6 @@ void execute(char **argv)
  * @ptr: previous pointer
  * @old_size: old size of previous pointer
  * @new_size: new size for our pointer
- *
  * Return: New resized Pointer
  */
 
@@ -81,8 +125,6 @@ void *_realloc(void *ptr, unsigned int old_size, unsigned int new_size)
 /**
  * freearv - frees the array of pointers arv
  *@arv: array of pointers
- *
- * Return: void
  */
 
 void freearv(char **arv)
@@ -92,25 +134,4 @@ void freearv(char **arv)
 	for (i = 0; arv[i]; i++)
 		free(arv[i]);
 	free(arv);
-}
-
-/**
- * free_list - frees a list_t
- *@head: pointer to our linked list
- *
- * Return: void
- */
-
-void free_list(list_path *head)
-{
-	list_path *storage;
-
-	while (head)
-	{
-		storage = head->p;
-		free(head->dir);
-		free(head);
-		head = storage;
-	}
-
 }
