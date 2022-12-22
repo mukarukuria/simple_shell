@@ -1,89 +1,73 @@
-#include "shell.h"
+#include "main.h"
 
 /**
- * sig_handler - checks if Ctrl C is pressed
- * @sig_num: int
+ * free_data - frees data structure
+ *
+ * @datash: data structure
+ * Return: no return
  */
-void sig_handler(int sig_num)
+void free_data(data_shell *datash)
 {
-	if (sig_num == SIGINT)
+	unsigned int i;
+
+	for (i = 0; datash->_environ[i]; i++)
 	{
-		_puts("\n#cisfun$ ");
+		free(datash->_environ[i]);
 	}
+
+	free(datash->_environ);
+	free(datash->pid);
 }
 
 /**
-* _EOF - handles the End of File
-* @len: return value of getline function
-* @buff: buffer
+ * set_data - Initialize data structure
+ *
+ * @datash: data structure
+ * @av: argument vector
+ * Return: no return
  */
-void _EOF(int len, char *buff)
+void set_data(data_shell *datash, char **av)
 {
-	(void)buff;
-	if (len == -1)
-	{
-		if (isatty(STDIN_FILENO))
-		{
-			_puts("\n");
-			free(buff);
-		}
-		exit(0);
-	}
-}
-/**
-  * _isatty - verif if terminal
-  */
+	unsigned int i;
 
-void _isatty(void)
-{
-	if (isatty(STDIN_FILENO))
-		_puts("#cisfun$ ");
+	datash->av = av;
+	datash->input = NULL;
+	datash->args = NULL;
+	datash->status = 0;
+	datash->counter = 1;
+
+	for (i = 0; environ[i]; i++)
+		;
+
+	datash->_environ = malloc(sizeof(char *) * (i + 1));
+
+	for (i = 0; environ[i]; i++)
+	{
+		datash->_environ[i] = _strdup(environ[i]);
+	}
+
+	datash->_environ[i] = NULL;
+	datash->pid = aux_itoa(getpid());
 }
+
 /**
- * main - Shell
- * Return: 0 on success
+ * main - Entry point
+ *
+ * @ac: argument count
+ * @av: argument vector
+ *
+ * Return: 0 on success.
  */
-
-int main(void)
+int main(int ac, char **av)
 {
-	ssize_t len = 0;
-	char *buff = NULL, *value, *pathname, **arv;
-	size_t size = 0;
-	list_path *head = '\0';
-	void (*f)(char **);
+	data_shell datash;
+	(void) ac;
 
-	signal(SIGINT, sig_handler);
-	while (len != EOF)
-	{
-		_isatty();
-		len = getline(&buff, &size, stdin);
-		_EOF(len, buff);
-		arv = splitstring(buff, " \n");
-		if (!arv || !arv[0])
-			execute(arv);
-		else
-		{
-			value = _getenv("PATH");
-			head = linkpath(value);
-			pathname = _which(arv[0], head);
-			f = checkbuild(arv);
-			if (f)
-			{
-				free(buff);
-				f(arv);
-			}
-			else if (!pathname)
-				execute(arv);
-			else if (pathname)
-			{
-				free(arv[0]);
-				arv[0] = pathname;
-				execute(arv);
-			}
-		}
-	}
-	free_list(head);
-	freearv(arv);
-	free(buff);
-	return (0);
+	signal(SIGINT, get_sigint);
+	set_data(&datash, av);
+	shell_loop(&datash);
+	free_data(&datash);
+	if (datash.status < 0)
+		return (255);
+	return (datash.status);
 }
